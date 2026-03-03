@@ -1,0 +1,290 @@
+PROMPT: "Write a Vue 3 single-file component called StartScreen. It should display a heading that says 'QuizBlitz', a short tagline, and a button labelled 'Play'. When the button is clicked, it emits an event called 'start'. Use the Options API (not Composition API). No props needed."
+RESPONSE: Here is the StartScreen.vue component built using the Options API.
+    StartScreen.vue
+
+    <template>
+    <div class="start-screen">
+        <h1>QuizBlitz</h1>
+        <p class="tagline">Test your speed. Master the facts.</p>
+        <button @click="handleStartClick">Play</button>
+    </div>
+    </template>
+
+    <script>
+    export default {
+    name: 'StartScreen',
+    // Defining emitted events for clarity and documentation
+    emits: ['start'],
+    methods: {
+        handleStartClick() {
+        // Emits the 'start' event to the parent component
+        this.$emit('start');
+        }
+    }
+    }
+    </script>
+
+    <style scoped>
+    .start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    font-family: sans-serif;
+    }
+
+    h1 {
+    font-size: 3rem;
+    color: #42b883; /* Vue green */
+    margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+    font-size: 1.2rem;
+    color: #35495e;
+    margin-bottom: 2rem;
+    }
+
+    button {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    background-color: #42b883;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    }
+
+    button:hover {
+    background-color: #3aa876;
+    }
+
+    button:active {
+    transform: scale(0.95);
+    }
+    </style>
+
+    ------------------------------
+    How to use it in your App.vue
+    To listen for that event, you would use the @start syntax in your parent component:
+
+    <StartScreen @start="startGame" />
+
+    Would you like me to help you create the QuestionDisplay component next to handle the actual quiz logic?
+
+WHAT I USED / CHANGED: 
+    <template>
+    <div class="start-screen">
+        <h1>QuizBlitz</h1>
+        <p class="tagline">Test your speed. Master the facts.</p>
+        <button @click="handleStartClick">Play</button>
+    </div>
+    </template>
+
+    <script>
+    export default {
+    name: 'StartScreen',
+    // Defining emitted events for clarity and documentation
+    emits: ['start'],
+    methods: {
+        handleStartClick() {
+        // Emits the 'start' event to the parent component
+        this.$emit('start');
+        }
+    }
+    }
+    </script>
+
+    <style scoped>
+    .start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    font-family: sans-serif;
+    }
+
+    h1 {
+    font-size: 3rem;
+    color: #42b883; /* Vue green */
+    margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+    font-size: 1.2rem;
+    color: #35495e;
+    margin-bottom: 2rem;
+    }
+
+    button {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    background-color: #42b883;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    }
+
+    button:hover {
+    background-color: #3aa876;
+    }
+
+    button:active {
+    transform: scale(0.95);
+    }
+    </style>
+
+PROMPT: "Write a Vue 3 single-file component called StartScreen. It should display a heading that says 'QuizBlitz', a short tagline, and a button labelled 'Play'. When the button is clicked, it emits an event called 'start'. Use the Options API (not Composition API). No props needed."
+RESPONSE: 
+    Here is the ScoreBoard.vue component. Since we are using the Options API, we define the props and emits within the export object. [1] 
+    ScoreBoard.vue
+
+    <template>
+    <div class="score-board">
+        <h1>Game Over</h1>
+        <p class="final-score">You scored: <strong>{{ score }}</strong> / 10</p>
+        
+        <button @click="onRestart">Play Again</button>
+    </div>
+    </template>
+
+    <script>
+    export default {
+    name: 'ScoreBoard',
+    props: {
+        // Receiving the score from the parent component
+        score: {
+        type: Number,
+        required: true,
+        default: 0
+        }
+    },
+    emits: ['restart'],
+    methods: {
+        onRestart() {
+        // Notify parent to reset the game state
+        this.$emit('restart');
+        }
+    }
+    }
+    </script>
+
+    <style scoped>
+    .score-board {
+    text-align: center;
+    padding: 3rem;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+    color: #e74c3c; /* A distinct 'Game Over' red */
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    }
+
+    .final-score {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    }
+
+    button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #35495e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    button:hover {
+    background-color: #42b883;
+    }
+    </style>
+
+    ------------------------------
+    Implementation Tip
+    In your main logic, you can now toggle between these screens using a simple v-if directive. For example:
+
+    * <StartScreen v-if="state === 'start'" @start="state = 'playing'" />
+    * <ScoreBoard v-else-if="state === 'end'" :score="userScore" @restart="resetGame" />
+
+    Would you like me to create the logic for the "QuestionDisplay" component so you can actually calculate that score?
+
+    [1] [https://www.telerik.com](https://www.telerik.com/blogs/vue-basics-script-setup-sugar#:~:text=defineProps%20When%20creating%20a%20component%20with%20script,that%20is%20exported%20at%20the%20top%20level.)
+WHAT I USED / CHANGED:
+    <template>
+    <div class="score-board">
+        <h1>Game Over</h1>
+        <p class="final-score">You scored: <strong>{{ score }}</strong> / 10</p>
+        
+        <button @click="onRestart">Play Again</button>
+    </div>
+    </template>
+
+    <script>
+    export default {
+    name: 'ScoreBoard',
+    props: {
+        // Receiving the score from the parent component
+        score: {
+        type: Number,
+        required: true,
+        default: 0
+        }
+    },
+    emits: ['restart'],
+    methods: {
+        onRestart() {
+        // Notify parent to reset the game state
+        this.$emit('restart');
+        }
+    }
+    }
+    </script>
+
+    <style scoped>
+    .score-board {
+    text-align: center;
+    padding: 3rem;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+    color: #e74c3c; /* A distinct 'Game Over' red */
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    }
+
+    .final-score {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    }
+
+    button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #35495e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    button:hover {
+    background-color: #42b883;
+    }
+    </style>
