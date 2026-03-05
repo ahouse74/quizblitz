@@ -673,4 +673,238 @@ WHAT I USED / CHANGED:
     .answer-btn.wrong .answer-letter { background: #ef4444; color: #fff; }
     </style>
 
+PROMPT: I have a Vue 3 quiz game using the Options API. Write a PlayView.vue that contains the game logic. It should have a `questions` array (I'll fill in the data), a `currentIndex`, a `score`, and a `gameState` of 'playing' or 'end'. In mounted(), call startGame(). When the game ends, use this.$router.push({ name: 'home' }) to return to the home screen. The template shows a QuestionCard component while playing, and a ScoreBoard component when done. Show me the full single-file component.
+RESPONSE: 
+    ```vue
+    <template>
+    <div class="play-view">
+        <!-- Playing state -->
+        <QuestionCard
+        v-if="gameState === 'playing'"
+        :question="currentQuestion"
+        :current="currentIndex + 1"
+        :total="questions.length"
+        @answer="handleAnswer"
+        />
 
+        <!-- End state -->
+        <ScoreBoard
+        v-else-if="gameState === 'end'"
+        :score="score"
+        :total="questions.length"
+        @restart="startGame"
+        @home="goHome"
+        />
+    </div>
+    </template>
+
+    <script>
+    import QuestionCard from '@/components/QuestionCard.vue'
+    import ScoreBoard from '@/components/ScoreBoard.vue'
+
+    export default {
+    name: 'PlayView',
+
+    components: {
+        QuestionCard,
+        ScoreBoard
+    },
+
+    data() {
+        return {
+        questions: [
+            // Fill in your questions here. Expected shape per item:
+            // {
+            //   id: 1,
+            //   prompt: 'What is the capital of France?',
+            //   options: ['Berlin', 'Madrid', 'Paris', 'Rome'],
+            //   answer: 'Paris'
+            // }
+        ],
+        currentIndex: 0,
+        score: 0,
+        gameState: 'playing' // 'playing' | 'end'
+        }
+    },
+
+    computed: {
+        currentQuestion() {
+        return this.questions[this.currentIndex] ?? null
+        }
+    },
+
+    mounted() {
+        this.startGame()
+    },
+
+    methods: {
+        startGame() {
+        this.currentIndex = 0
+        this.score = 0
+        this.gameState = 'playing'
+        },
+
+        handleAnswer(selectedOption) {
+        const question = this.currentQuestion
+        if (!question) return
+
+        if (selectedOption === question.answer) {
+            this.score++
+        }
+
+        this.advance()
+        },
+
+        advance() {
+        const isLastQuestion = this.currentIndex >= this.questions.length - 1
+
+        if (isLastQuestion) {
+            this.endGame()
+        } else {
+            this.currentIndex++
+        }
+        },
+
+        endGame() {
+        this.gameState = 'end'
+        },
+
+        goHome() {
+        this.$router.push({ name: 'home' })
+        }
+    }
+    }
+    </script>
+
+    <style scoped>
+    .play-view {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    }
+    </style>
+    ```
+
+    A few notes on the key decisions:
+
+    **`currentQuestion` as a computed**: Rather than indexing into `questions` directly in the template, the computed property centralises that lookup and the `?? null` guard prevents a crash if the array is empty.
+
+    **`handleAnswer` → `advance()` separation**: Scoring and progression are intentionally split. `handleAnswer` owns correctness checking, `advance` owns index movement and end detection. This makes it easy to later insert things like a per-question timer or an animation delay between questions — you'd add it in `advance()` without touching scoring logic.
+
+    **`startGame()` resets all state**: Calling it from both `mounted()` and the ScoreBoard's `@restart` event means there's a single source of truth for what a "fresh game" looks like.
+
+    **Props and events passed to child components** — the contracts assumed are:
+    - `QuestionCard` receives `:question`, `:current`, `:total` and emits `@answer` with the selected option string
+    - `ScoreBoard` receives `:score`, `:total` and emits `@restart` and `@home`
+WHAT I USED / CHANGED:
+    <template>
+    <div class="play-view">
+        <!-- Playing state -->
+        <QuestionCard
+        v-if="gameState === 'playing'"
+        :question="currentQuestion"
+        :current="currentIndex + 1"
+        :total="questions.length"
+        @answer="handleAnswer"
+        />
+
+        <!-- End state -->
+        <ScoreBoard
+        v-else-if="gameState === 'end'"
+        :score="score"
+        :total="questions.length"
+        @restart="startGame"
+        @home="goHome"
+        />
+    </div>
+    </template>
+
+    <script>
+    import QuestionCard from '@/components/QuestionCard.vue'
+    import ScoreBoard from '@/components/ScoreBoard.vue'
+
+    export default {
+    name: 'PlayView',
+
+    components: {
+        QuestionCard,
+        ScoreBoard
+    },
+
+    data() {
+        return {
+        questions: [
+            // Fill in your questions here. Expected shape per item:
+            // {
+            //   id: 1,
+            //   prompt: 'What is the capital of France?',
+            //   options: ['Berlin', 'Madrid', 'Paris', 'Rome'],
+            //   answer: 'Paris'
+            // }
+        ],
+        currentIndex: 0,
+        score: 0,
+        gameState: 'playing' // 'playing' | 'end'
+        }
+    },
+
+    computed: {
+        currentQuestion() {
+        return this.questions[this.currentIndex] ?? null
+        }
+    },
+
+    mounted() {
+        this.startGame()
+    },
+
+    methods: {
+        startGame() {
+        this.currentIndex = 0
+        this.score = 0
+        this.gameState = 'playing'
+        },
+
+        handleAnswer(selectedOption) {
+        const question = this.currentQuestion
+        if (!question) return
+
+        if (selectedOption === question.answer) {
+            this.score++
+        }
+
+        this.advance()
+        },
+
+        advance() {
+        const isLastQuestion = this.currentIndex >= this.questions.length - 1
+
+        if (isLastQuestion) {
+            this.endGame()
+        } else {
+            this.currentIndex++
+        }
+        },
+
+        endGame() {
+        this.gameState = 'end'
+        },
+
+        goHome() {
+        this.$router.push({ name: 'home' })
+        }
+    }
+    }
+    </script>
+
+    <style scoped>
+    .play-view {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    }
+    </style>
