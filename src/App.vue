@@ -28,7 +28,11 @@ nav a.router-link-active {
 </style>
 
 <script>
+import { useGameStore } from './stores/gameStore.js'
+
 export default {
-  name: 'App'
+  setup() {
+    const store = useGameStore() 
+  }
 }
 </script>
