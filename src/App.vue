@@ -8,31 +8,14 @@
   </div>
 </template>
 
-<style>
-nav {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: #1a1a2e;
-}
-
-nav a {
-  color: #e0e0e0;
-  text-decoration: none;
-}
-
-nav a.router-link-active {
-  color: #f5c518;
-  font-weight: bold;
-}
-</style>
-
 <script>
 import { useGameStore } from './stores/gameStore.js'
 
 export default {
+  name: 'App',
   setup() {
-    const store = useGameStore() 
+    const store = useGameStore()
+    return { store }
   }
 }
 </script>
