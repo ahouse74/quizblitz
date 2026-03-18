@@ -10,12 +10,8 @@
         v-for="(answer, index) in question.answers"
         :key="index"
         class="answer-btn"
-        :class="{
-          correct: highlightCorrect && index === question.correct,
-          wrong: highlightWrong === index,
-          disabled: isDisabled,
-        }"
-        :disabled="isDisabled"
+        :class="buttonClass(index)"
+        :disabled="selectedAnswer !== null"
         @click="handleAnswer(index)"
       >
         <span class="answer-letter">{{ letters[index] }}</span>
@@ -35,42 +31,34 @@ export default {
       required: true,
       // Shape: { question: String, answers: Array, correct: Number }
     },
+    selectedAnswer: {
+      type: Number,
+      default: null,
+    },
   },
 
   emits: ['answer'],
 
   data() {
     return {
-      isDisabled: false,
-      highlightCorrect: false,
-      highlightWrong: null,
       letters: ['A', 'B', 'C', 'D'],
     }
   },
 
   methods: {
     handleAnswer(index) {
-      if (this.isDisabled) return
-
-      const isCorrect = index === this.question.correct
-
-      this.isDisabled = true          // lock all buttons immediately
-      this.highlightCorrect = true    // always reveal the correct answer
-
-      if (!isCorrect) {
-        this.highlightWrong = index   // also flag the wrong pick in red
+      if (this.selectedAnswer === null) {
+        this.$emit('answer', index)
       }
-
-      setTimeout(() => {
-        this.$emit('answer', isCorrect)
-        this.resetState()
-      }, 1000)
     },
 
-    resetState() {
-      this.isDisabled = false
-      this.highlightCorrect = false
-      this.highlightWrong = null
+    buttonClass(index) {
+      if (this.selectedAnswer === null) return ''
+
+      if (index === this.question.correct) return 'correct'
+      if (index === this.selectedAnswer) return 'wrong'
+
+      return ''
     },
   },
 }
@@ -132,7 +120,7 @@ export default {
   color: #c8c8da;
 }
 
-.answer-btn:hover:not(.disabled) {
+.answer-btn:hover:not(:disabled) {
   background: #22224a;
   border-color: #6340ff;
   transform: translateY(-2px);
@@ -160,9 +148,13 @@ export default {
   line-height: 1.35;
 }
 
-.answer-btn.disabled { cursor: not-allowed; opacity: 0.6; }
+/* Mute non-highlighted buttons after reveal */
+.answer-btn:disabled:not(.correct):not(.wrong) {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
 
-/* correct answer always glows green */
+/* Correct answer glows green */
 .answer-btn.correct {
   background: #0d2b1a;
   border-color: #22c55e;
@@ -171,7 +163,7 @@ export default {
 }
 .answer-btn.correct .answer-letter { background: #22c55e; color: #fff; }
 
-/* wrong pick glows red */
+/* Wrong pick glows red */
 .answer-btn.wrong {
   background: #2b0d0d;
   border-color: #ef4444;
