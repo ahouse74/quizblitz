@@ -7,10 +7,10 @@
         class="timer-fill"
         :style="{ width: timerPercent + '%' }"
         :class="{ urgent: store.timeLeft <= 5 }"
-      ></div>
+      />
     </div>
 
-    <!-- Progress indicator -->
+    <!-- Progress -->
     <p class="progress">
       Question {{ store.progress.current }} of {{ store.progress.total }}
     </p>
@@ -29,6 +29,8 @@
       :score="store.score"
       :total="store.questions.length"
       @restart="handleRestart"
+      @home="$router.push({ name: 'home' })"
+      @leaderboard="$router.push({ name: 'leaderboard' })"
     />
 
   </div>
@@ -64,28 +66,47 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap');
+
+.play-view {
+  min-height: 100vh;
+  background: #0f0f1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 2rem;
+}
+
+/* ── Timer bar ── */
 .timer-bar {
   width: 100%;
-  height: 8px;
-  background: #333;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  max-width: 640px;
+  height: 3px;
+  background: #1e1e2e;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
   overflow: hidden;
 }
 
 .timer-fill {
   height: 100%;
-  background: #4caf50;
-  transition: width 0.9s linear;
+  background: #5b6af5;
+  transition: width 0.9s linear, background 0.3s ease;
+  border-radius: 999px;
 }
 
 .timer-fill.urgent {
-  background: #e53935;
+  background: #ef4444;
 }
 
+/* ── Progress ── */
 .progress {
-  text-align: center;
-  color: #aaa;
-  margin-bottom: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #44445a;
+  margin: 0 0 1.5rem;
+  text-transform: uppercase;
 }
 </style>
