@@ -908,3 +908,194 @@ WHAT I USED / CHANGED:
     padding: 1rem;
     }
     </style>
+
+PROMPT: Rewrite my QuestionCard.vue for a Vue 3 quiz game using the Options API. It receives two props: `question` (object with `question`, `answers`, `correct`) and `selectedAnswer` (Number or null, default null). When a button is clicked and `selectedAnswer` is null, emit 'answer' with the button's index number. Use a `buttonClass(index)` method to return 'correct' on the correct answer and 'wrong' on the clicked wrong answer, only after selectedAnswer is not null. Disable all buttons once selectedAnswer is not null. No setTimeout inside the component — timing is handled by the parent.
+RESPONSE:
+    Here's the rewritten component. Key decisions and how each requirement maps to the code:
+
+    **Props & defaults** — `question` is required with no default; `selectedAnswer` is typed `Number` with `default: null`. Vue's prop typing allows `null` at runtime even with `type: Number` when paired with a `default: null`.
+
+    **Emit guard** — `handleAnswer(index)` checks `this.selectedAnswer === null` before emitting `'answer'`, so double-clicks or race conditions are harmless.
+
+    **`buttonClass(index)`** — Returns `''` while no answer is selected (no flicker), then `'correct'` for the right answer index and `'wrong'` only for the specific wrong index clicked. All other buttons stay unstyled but dimmed via CSS.
+
+    **Disabling** — `:disabled="selectedAnswer !== null"` locks all buttons the moment a prop change arrives from the parent. No internal state needed.
+
+    **No `setTimeout`** — timing is entirely the parent's concern; the component is purely presentational once an answer is emitted.
+
+    **Styling notes** — dark theme with a grid layout (2-col, collapses to 1-col on mobile), letter-label badges (A–B–C–D), and distinct green/red reveal states with muted opacity on the neutral remaining buttons.
+WHAT I USED / CHANGED:
+    <template>
+    <div class="question-card">
+        <div class="question-text">
+        <span class="question-label">Question</span>
+        <p>{{ question.question }}</p>
+        </div>
+
+        <div class="answers-grid">
+        <button
+            v-for="(answer, index) in question.answers"
+            :key="index"
+            class="answer-btn"
+            :class="buttonClass(index)"
+            :disabled="selectedAnswer !== null"
+            @click="handleAnswer(index)"
+        >
+            <span class="answer-letter">{{ letters[index] }}</span>
+            <span class="answer-text">{{ answer }}</span>
+        </button>
+        </div>
+    </div>
+    </template>
+
+    <script>
+    export default {
+    name: 'QuestionCard',
+
+    props: {
+        question: {
+        type: Object,
+        required: true,
+        // Shape: { question: String, answers: Array, correct: Number }
+        },
+        selectedAnswer: {
+        type: Number,
+        default: null,
+        },
+    },
+
+    emits: ['answer'],
+
+    data() {
+        return {
+        letters: ['A', 'B', 'C', 'D'],
+        }
+    },
+
+    methods: {
+        handleAnswer(index) {
+        if (this.selectedAnswer === null) {
+            this.$emit('answer', index)
+        }
+        },
+
+        buttonClass(index) {
+        if (this.selectedAnswer === null) return ''
+
+        if (index === this.question.correct) return 'correct'
+        if (index === this.selectedAnswer) return 'wrong'
+
+        return ''
+        },
+    },
+    }
+    </script>
+
+    <style scoped>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=DM+Sans:wght@400;500&display=swap');
+
+    .question-card {
+    font-family: 'DM Sans', sans-serif;
+    background: #0f0f1a;
+    border: 1px solid #2a2a3d;
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 640px;
+    margin: 0 auto;
+    box-shadow: 0 0 60px rgba(99, 60, 255, 0.08);
+    }
+
+    .question-text { margin-bottom: 2rem; }
+
+    .question-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6340ff;
+    display: block;
+    margin-bottom: 0.75rem;
+    }
+
+    .question-text p {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #e8e8f0;
+    margin: 0;
+    line-height: 1.5;
+    }
+
+    .answers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    }
+
+    .answer-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: #1a1a2e;
+    border: 1.5px solid #2a2a3d;
+    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    color: #c8c8da;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+    background: #22224a;
+    border-color: #6340ff;
+    transform: translateY(-2px);
+    }
+
+    .answer-letter {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    background: #2a2a3d;
+    color: #8888aa;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+    }
+
+    .answer-text {
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.35;
+    }
+
+    /* Mute non-highlighted buttons after reveal */
+    .answer-btn:disabled:not(.correct):not(.wrong) {
+    cursor: not-allowed;
+    opacity: 0.4;
+    }
+
+    /* Correct answer glows green */
+    .answer-btn.correct {
+    background: #0d2b1a;
+    border-color: #22c55e;
+    color: #86efac;
+    opacity: 1;
+    }
+    .answer-btn.correct .answer-letter { background: #22c55e; color: #fff; }
+
+    /* Wrong pick glows red */
+    .answer-btn.wrong {
+    background: #2b0d0d;
+    border-color: #ef4444;
+    color: #fca5a5;
+    opacity: 1;
+    }
+    .answer-btn.wrong .answer-letter { background: #ef4444; color: #fff; }
+    </style>
