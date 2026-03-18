@@ -1,22 +1,20 @@
 <template>
-  <div class="home-view">
-    <StartScreen @start="handleStart" />
-  </div>
+  <button @click="startGame">Play</button>
 </template>
 
 <script>
-import StartScreen from '../components/StartScreen.vue'
+import { useGameStore } from '../stores/gameStore.js'
 
 export default {
   name: 'HomeView',
 
-  components: {
-    StartScreen
+  setup() {
+    return { store: useGameStore() }
   },
 
   methods: {
-    handleStart() {
-      sessionStorage.setItem('gameStarted', 'true')
+    startGame() {
+      this.store.startGame()
       this.$router.push({ name: 'play' })
     }
   }
