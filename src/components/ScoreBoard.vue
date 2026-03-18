@@ -1,7 +1,7 @@
 <template>
   <div class="score-board">
     <h1>Game Over</h1>
-    <p class="final-score">You scored: <strong>{{ score }}</strong> / 10</p>
+<p>You scored {{ score }} out of {{ total }}</p>
     
     <button @click="onRestart">Play Again</button>
   </div>
@@ -11,13 +11,15 @@
 export default {
   name: 'ScoreBoard',
   props: {
-    // Receiving the score from the parent component
-    score: {
-      type: Number,
-      required: true,
-      default: 0
-    }
+  score: {
+    type: Number,
+    required: true
   },
+  total: {
+    type: Number,
+    default: 10
+  }
+},
   emits: ['restart'],
   methods: {
     onRestart() {
