@@ -10,7 +10,9 @@ export const useGameStore = defineStore('game', {
         gameState: 'start',
         selectedAnswer: null,
         timeLeft: 15,
-        _timerInterval: null
+        _timerInterval: null,
+        playerName: '',
+        scoreSubmitted: false
     }),
 
     getters: {
@@ -45,8 +47,10 @@ export const useGameStore = defineStore('game', {
             }
         },
 
-        startGame() {
-            this.questions = [...questionBank]
+        async startGame() {
+            const response = await fetch('http://localhost:3000/api/questions/random')
+            const questions = await response.json()
+            this.questions = questions
             this.currentIndex = 0
             this.score = 0
             this.gameState = 'playing'
@@ -78,6 +82,22 @@ export const useGameStore = defineStore('game', {
             }
         },
 
+        async submitScore() {
+            if (!this.playerName.trim()) return
+            const response = await fetch('http://localhost:3000/api/scores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    playerName: this.playerName,
+                    score: this.score,
+                    totalQuestions: this.questions.length
+                })
+            })
+            if (response.ok) {
+                this.scoreSubmitted = true
+            }
+        },
+
         resetGame() {
             this._stopTimer()
             this.questions = []
@@ -86,6 +106,8 @@ export const useGameStore = defineStore('game', {
             this.gameState = 'start'
             this.selectedAnswer = null
             this.timeLeft = 15
+            this.playerName = ''
+            this.scoreSubmitted = false
         }
     }
-})  
+})

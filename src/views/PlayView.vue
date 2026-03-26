@@ -23,15 +23,42 @@
       @answer="store.submitAnswer"
     />
 
-    <!-- Score screen -->
-    <ScoreBoard
+    <!-- End screen -->
+    <div
       v-else-if="store.gameState === 'end'"
-      :score="store.score"
-      :total="store.questions.length"
-      @restart="handleRestart"
-      @home="$router.push({ name: 'home' })"
-      @leaderboard="$router.push({ name: 'leaderboard' })"
-    />
+      class="end-screen"
+    >
+      <h2 class="end-title">Game Over</h2>
+      <p class="end-score">
+        You scored <span class="score-highlight">{{ store.score }}</span>
+        of {{ store.questions.length }}
+      </p>
+
+      <!-- Submit form -->
+      <div v-if="!store.scoreSubmitted" class="submit-form">
+        <input
+          v-model="store.playerName"
+          class="name-input"
+          placeholder="Enter your name"
+          maxlength="32"
+          @keyup.enter="store.submitScore()"
+        />
+        <button
+          class="btn btn-primary"
+          :disabled="!store.playerName.trim()"
+          @click="store.submitScore()"
+        >
+          Submit Score
+        </button>
+      </div>
+      <p v-else class="submitted-msg">Score submitted! ✓</p>
+
+      <div class="end-actions">
+        <button class="btn btn-secondary" @click="handleRestart">Play Again</button>
+        <button class="btn btn-ghost" @click="$router.push({ name: 'leaderboard' })">Leaderboard</button>
+        <button class="btn btn-ghost" @click="$router.push({ name: 'home' })">Home</button>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -39,11 +66,10 @@
 <script>
 import { useGameStore } from '../stores/gameStore.js'
 import QuestionCard from '../components/QuestionCard.vue'
-import ScoreBoard from '../components/ScoreBoard.vue'
 
 export default {
   name: 'PlayView',
-  components: { QuestionCard, ScoreBoard },
+  components: { QuestionCard },
 
   setup() {
     const store = useGameStore()
@@ -66,7 +92,7 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
 .play-view {
   min-height: 100vh;
@@ -108,5 +134,131 @@ export default {
   color: #44445a;
   margin: 0 0 1.5rem;
   text-transform: uppercase;
+}
+
+/* ── End screen ── */
+.end-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 3rem;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.end-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #e2e2f0;
+  margin: 0;
+}
+
+.end-score {
+  font-size: 1.1rem;
+  color: #8888aa;
+  margin: 0;
+}
+
+.score-highlight {
+  color: #5b6af5;
+  font-weight: 700;
+}
+
+/* ── Submit form ── */
+.submit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.name-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #1a1a2e;
+  border: 1px solid #2e2e4a;
+  border-radius: 10px;
+  color: #e2e2f0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.name-input::placeholder {
+  color: #44445a;
+}
+
+.name-input:focus {
+  border-color: #5b6af5;
+}
+
+.submitted-msg {
+  font-size: 1rem;
+  color: #4ade80;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* ── Buttons ── */
+.btn {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #5b6af5;
+  color: #fff;
+}
+
+.btn-primary:not(:disabled):hover {
+  opacity: 0.88;
+}
+
+.btn-secondary {
+  background: #1e1e38;
+  color: #c0c0e0;
+}
+
+.btn-secondary:hover {
+  background: #26263e;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #44445a;
+  border: 1px solid #1e1e2e;
+}
+
+.btn-ghost:hover {
+  color: #8888aa;
+  border-color: #2e2e4a;
+}
+
+.end-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
 }
 </style>
