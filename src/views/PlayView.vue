@@ -24,41 +24,26 @@
     />
 
     <!-- End screen -->
-    <div
-      v-else-if="store.gameState === 'end'"
-      class="end-screen"
-    >
-      <h2 class="end-title">Game Over</h2>
-      <p class="end-score">
-        You scored <span class="score-highlight">{{ store.score }}</span>
-        of {{ store.questions.length }}
-      </p>
+    <div v-if="store.gameState === 'end'">
+  <h2>Game Over</h2>
+  <p>You scored {{ store.score }} / {{ store.questions.length }}</p>
 
-      <!-- Submit form -->
-      <div v-if="!store.scoreSubmitted" class="submit-form">
-        <input
-          v-model="store.playerName"
-          class="name-input"
-          placeholder="Enter your name"
-          maxlength="32"
-          @keyup.enter="store.submitScore()"
-        />
-        <button
-          class="btn btn-primary"
-          :disabled="!store.playerName.trim()"
-          @click="store.submitScore()"
-        >
-          Submit Score
-        </button>
-      </div>
-      <p v-else class="submitted-msg">Score submitted! ✓</p>
+  <div v-if="store.token">
+    <p>Playing as {{ store.userEmail }}</p>
+    <button v-if="!store.scoreSubmitted" @click="store.submitScore()">
+      Submit Score
+    </button>
+    <p v-else>Score submitted ✓</p>
+  </div>
 
-      <div class="end-actions">
-        <button class="btn btn-secondary" @click="handleRestart">Play Again</button>
-        <button class="btn btn-ghost" @click="$router.push({ name: 'leaderboard' })">Leaderboard</button>
-        <button class="btn btn-ghost" @click="$router.push({ name: 'home' })">Home</button>
-      </div>
-    </div>
+  <div v-else>
+    <p>
+      <RouterLink to="/login">Log in</RouterLink> to save your score to the leaderboard.
+    </p>
+  </div>
+
+  <button @click="handleRestart">Play Again</button>
+</div>
 
   </div>
 </template>

@@ -3,6 +3,13 @@
     <nav class="nav">
       <RouterLink to="/" class="nav-link">Home</RouterLink>
       <RouterLink to="/leaderboard" class="nav-link">Leaderboard</RouterLink>
+      <template v-if="store.token">
+        <button class="nav-link nav-btn" @click="handleLogout">Log out</button>
+      </template>
+      <template v-else>
+        <RouterLink to="/login" class="nav-link">Log in</RouterLink>
+        <RouterLink to="/register" class="nav-link">Register</RouterLink>
+      </template>
     </nav>
     <RouterView />
   </div>
@@ -16,6 +23,13 @@ export default {
   setup() {
     const store = useGameStore()
     return { store }
+  },
+
+  methods: {
+    handleLogout() {
+      this.store.logout()
+      this.$router.push({ name: 'home' })
+    }
   }
 }
 </script>
@@ -67,5 +81,9 @@ body {
 .nav-link.router-link-active {
   border-color: #5b6af5;
   color: #c8c8e8;
+}
+
+.nav-btn {
+  cursor: pointer;
 }
 </style>

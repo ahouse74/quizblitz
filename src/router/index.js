@@ -7,7 +7,9 @@ import LeaderboardView from '../views/LeaderboardView.vue'
 const routes = [
     { path: '/', name: 'home', component: HomeView },
     { path: '/play', name: 'play', component: PlayView },
-    { path: '/leaderboard', name: 'leaderboard', component: LeaderboardView }
+    { path: '/leaderboard', name: 'leaderboard', component: LeaderboardView },
+    { path: '/login', name: 'login', component: LoginView },
+    { path: '/register', name: 'register', component: RegisterView }
 ]
 
 const router = createRouter({
