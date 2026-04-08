@@ -97,7 +97,6 @@ export default {
 
 .btn-ghost {
   background: transparent;
-  color: #6666884;
   border: 1.5px solid #22223a;
   color: #7777aa;
 }
