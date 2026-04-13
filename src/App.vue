@@ -28,7 +28,7 @@ export default {
   methods: {
     handleLogout() {
       this.store.logout()
-      this.$router.push({ name: 'home' })
+      this.$router.push({ name: 'login' })
     }
   }
 }
