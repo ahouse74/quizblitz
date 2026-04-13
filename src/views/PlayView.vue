@@ -24,26 +24,30 @@
     />
 
     <!-- End screen -->
-    <div v-if="store.gameState === 'end'">
-  <h2>Game Over</h2>
-  <p>You scored {{ store.score }} / {{ store.questions.length }}</p>
+    <div v-if="store.gameState === 'end'" class="end-screen">
+      <div class="end-card">
+        <h2 class="end-title">Game Over</h2>
+        <p class="end-score">You scored <span class="score-highlight">{{ store.score }}</span> / {{ store.questions.length }}</p>
 
-  <div v-if="store.token">
-    <p>Playing as {{ store.userEmail }}</p>
-    <button v-if="!store.scoreSubmitted" @click="store.submitScore()">
-      Submit Score
-    </button>
-    <p v-else>Score submitted ✓</p>
-  </div>
+        <div class="submit-form">
+          <div v-if="store.token" class="score-details">
+            <p class="end-subtitle">Playing as {{ store.userEmail }}</p>
+            <button class="btn btn-primary" v-if="!store.scoreSubmitted" @click="store.submitScore()">
+              Submit Score
+            </button>
+            <p v-else class="submitted-msg">Score submitted ✓</p>
+          </div>
 
-  <div v-else>
-    <p>
-      <RouterLink to="/login">Log in</RouterLink> to save your score to the leaderboard.
-    </p>
-  </div>
+          <div v-else class="login-prompt">
+            <p class="end-subtitle">
+              <RouterLink to="/login" class="link-button">Log in</RouterLink> to save your score to the leaderboard.
+            </p>
+          </div>
+        </div>
 
-  <button @click="handleRestart">Play Again</button>
-</div>
+        <button class="btn btn-primary btn-full" @click="handleRestart">Play Again</button>
+      </div>
+    </div>
 
   </div>
 </template>
