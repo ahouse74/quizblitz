@@ -7,8 +7,7 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 
 const routes = [
-    { path: '/', redirect: { name: 'login' } },
-    { path: '/home', name: 'home', component: HomeView, meta: { requiresAuth: true } },
+    { path: '/', name: 'home', component: HomeView, meta: { requiresAuth: true } },
     { path: '/play', name: 'play', component: PlayView, meta: { requiresAuth: true } },
     { path: '/leaderboard', name: 'leaderboard', component: LeaderboardView, meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: LoginView },
@@ -16,7 +15,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes
 })
 

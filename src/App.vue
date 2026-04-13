@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav class="nav">
-      <RouterLink to="/home" class="nav-link">Home</RouterLink>
+      <RouterLink to="/" class="nav-link">Home</RouterLink>
       <RouterLink to="/leaderboard" class="nav-link">Leaderboard</RouterLink>
       <template v-if="store.token">
         <button class="nav-link nav-btn" @click="handleLogout">Log out</button>
