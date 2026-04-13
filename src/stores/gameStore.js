@@ -23,7 +23,8 @@ export const useGameStore = defineStore('game', {
         progress: (state) => ({
             current: state.currentIndex + 1,
             total: state.questions.length
-        })
+        }),
+        isAuthenticated: (state) => Boolean(state.token)
     },
 
     actions: {

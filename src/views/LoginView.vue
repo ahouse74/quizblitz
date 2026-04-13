@@ -67,7 +67,12 @@ export default {
       this.loading = true
       try {
         await this.store.login(this.email, this.password)
-        this.$router.push({ name: 'home' })
+        const redirect = this.$route.query.redirect
+        if (redirect) {
+          this.$router.push(redirect)
+        } else {
+          this.$router.push({ name: 'home' })
+        }
       } catch (err) {
         this.error = err.message
       } finally {
