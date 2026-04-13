@@ -7,9 +7,9 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 
 const routes = [
-    { path: '/', name: 'home', component: HomeView },
+    { path: '/', name: 'home', component: HomeView, meta: { requiresAuth: true } },
     { path: '/play', name: 'play', component: PlayView, meta: { requiresAuth: true } },
-    { path: '/leaderboard', name: 'leaderboard', component: LeaderboardView },
+    { path: '/leaderboard', name: 'leaderboard', component: LeaderboardView, meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/register', name: 'register', component: RegisterView }
 ]
